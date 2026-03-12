@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="Cricket Dashboard - Live Scores, IPL, BBL, PSL, International Cricket" />
+    <title>CricDash - Live Cricket Scores & Stats</title>
+
+    <!-- Google Fonts: Rajdhani (display) + DM Sans (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              rajdhani: ['Rajdhani', 'sans-serif'],
+              dm: ['DM Sans', 'sans-serif'],
+            },
+            colors: {
+              pitch: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+              },
+              ember: {
+                500: '#f97316',
+                600: '#ea580c',
+              }
+            },
+            animation: {
+              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'slide-in': 'slideIn 0.3s ease-out',
+              'fade-in': 'fadeIn 0.4s ease-out',
+            },
+            keyframes: {
+              slideIn: {
+                '0%': { transform: 'translateY(-10px)', opacity: 0 },
+                '100%': { transform: 'translateY(0)', opacity: 1 },
+              },
+              fadeIn: {
+                '0%': { opacity: 0 },
+                '100%': { opacity: 1 },
+              },
+            }
+          },
+        },
+      };
+    </script>
+
+    <style>
+      * { font-family: 'DM Sans', sans-serif; }
+      h1, h2, h3, .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+      .live-dot::before {
+        content: '';
+        display: inline-block;
+        width: 8px; height: 8px;
+        background: #ef4444;
+        border-radius: 50%;
+        margin-right: 6px;
+        animation: pulse 1.2s ease-in-out infinite;
+      }
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #1e293b; }
+      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
