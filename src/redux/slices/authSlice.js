@@ -1,54 +1,94 @@
-// authSlice.js
+// redux/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authAPI } from '../../services/api';
 
-export const login = createAsyncThunk('auth/login', async (data, { rejectWithValue }) => {
-  try {
-    const res = await authAPI.login(data);
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Login failed');
+// Async thunks
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.login(credentials);
+      // Save token to localStorage
+      localStorage.setItem('cricdash_token', data.token);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Login failed');
+    }
   }
-});
+);
 
-export const register = createAsyncThunk('auth/register', async (data, { rejectWithValue }) => {
-  try {
-    const res = await authAPI.register(data);
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Registration failed');
+export const registerUser = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.register(userData);
+      localStorage.setItem('cricdash_token', data.token);
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Registration failed');
+    }
   }
-});
+);
+
+export const fetchProfile = createAsyncThunk(
+  'auth/fetchProfile',
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.getProfile();
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch profile');
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
+    user: null,
+    token: localStorage.getItem('cricdash_token') || null,
     loading: false,
     error: null,
   },
   reducers: {
-    logout(state) {
+    // Logout clears everything
+    logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('cricdash_token');
     },
-    clearError(state) { state.error = null; },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(login.fulfilled, (state, action) => { state.loading = false; state.user = action.payload.user; state.token = action.payload.token; })
-      .addCase(login.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
-      .addCase(register.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(register.fulfilled, (state, action) => { state.loading = false; state.user = action.payload.user; state.token = action.payload.token; })
-      .addCase(register.rejected, (state, action) => { state.loading = false; state.error = action.payload; });
+      // Login
+      .addCase(loginUser.pending,   (state) => { state.loading = true; state.error = null; })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user  = action.payload;
+        state.token = action.payload.token;
+      })
+      .addCase(loginUser.rejected,  (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Register
+      .addCase(registerUser.pending,   (state) => { state.loading = true; state.error = null; })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user  = action.payload;
+        state.token = action.payload.token;
+      })
+      .addCase(registerUser.rejected,  (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch profile
+      .addCase(fetchProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+      });
   },
 });
 

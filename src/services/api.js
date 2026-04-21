@@ -1,94 +1,70 @@
+// services/api.js - Central Axios instance for all API calls
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-const api = axios.create({
-  baseURL: API_URL,
-  timeout: 15000,
+// Base Axios instance
+const API = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Request interceptor - attach JWT token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response interceptor - handle 401
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+// Attach JWT token to every request if user is logged in
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem('cricdash_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
-// --- MATCHES ---
-export const matchesAPI = {
-  getAll: (params) => api.get('/matches', { params }),
-  getOne: (id) => api.get(`/matches/${id}`),
-  getLive: () => api.get('/matches/live'),
-  create: (data) => api.post('/matches', data),
-  update: (id, data) => api.put(`/matches/${id}`, data),
-  delete: (id) => api.delete(`/matches/${id}`),
-  getHighlights: (id) => api.get(`/matches/${id}/highlights`),
-};
+// ─── Individual named exports (used in new phases) ────────────
+export const fetchMatches    = (status)  => API.get('/matches', { params: { status } });
+export const fetchMatchById  = (id)      => API.get(`/matches/${id}`);
+export const fetchPlayers    = (filters) => API.get('/players', { params: filters });
+export const fetchPlayerById = (id)      => API.get(`/players/${id}`);
+export const fetchVenues     = ()        => API.get('/venues');
+export const fetchVenueById  = (id)      => API.get(`/venues/${id}`);
+export const fetchTweets     = (filters) => API.get('/tweets', { params: filters });
+export const registerUser    = (data)    => API.post('/users/register', data);
+export const loginUser       = (data)    => API.post('/users/login', data);
+export const fetchUserProfile  = ()      => API.get('/users/profile');
+export const updateUserProfile = (data)  => API.put('/users/profile', data);
 
-// --- PLAYERS ---
-export const playersAPI = {
-  getAll: (params) => api.get('/players', { params }),
-  getOne: (id) => api.get(`/players/${id}`),
-  create: (data) => api.post('/players', data),
-};
+// ─── Grouped exports (used by existing Redux slices) ──────────
+// These match what your old slices expect: authAPI, matchesAPI, etc.
 
-// --- TEAMS ---
-export const teamsAPI = {
-  getAll: (params) => api.get('/teams', { params }),
-  getOne: (id) => api.get(`/teams/${id}`),
-};
-
-// --- TWEETS ---
-export const tweetsAPI = {
-  getAll: (params) => api.get('/tweets', { params }),
-  getTrending: () => api.get('/tweets/trending'),
-  create: (data) => api.post('/tweets', data),
-  delete: (id) => api.delete(`/tweets/${id}`),
-};
-
-// --- VENUES ---
-export const venuesAPI = {
-  getAll: (params) => api.get('/venues', { params }),
-  getOne: (id) => api.get(`/venues/${id}`),
-  create: (data) => api.post('/venues', data),
-  update: (id, data) => api.put(`/venues/${id}`, data),
-};
-
-// --- LEAGUES ---
-export const leaguesAPI = {
-  getAll: () => api.get('/leagues'),
-  getOne: (id) => api.get(`/leagues/${id}`),
-};
-
-// --- AUTH ---
 export const authAPI = {
-  login: (data) => api.post('/auth/login', data),
-  register: (data) => api.post('/auth/register', data),
-  getMe: () => api.get('/auth/me'),
-  bookmark: (matchId) => api.post(`/auth/bookmark/${matchId}`),
+  login:    (data) => API.post('/users/login', data),
+  register: (data) => API.post('/users/register', data),
+  getProfile:    () => API.get('/users/profile'),
+  updateProfile: (data) => API.put('/users/profile', data),
 };
 
-// --- ADMIN ---
-export const adminAPI = {
-  getStats: () => api.get('/admin/stats'),
-  addHighlight: (matchId, data) => api.put(`/admin/matches/${matchId}/highlight`, data),
+export const matchesAPI = {
+  getAll:    (status) => API.get('/matches', { params: { status } }),
+  getById:   (id)     => API.get(`/matches/${id}`),
+  create:    (data)   => API.post('/matches', data),
+  update:    (id, data) => API.put(`/matches/${id}`, data),
+  delete:    (id)     => API.delete(`/matches/${id}`),
 };
 
-export default api;
+export const playersAPI = {
+  getAll:  (filters) => API.get('/players', { params: filters }),
+  getById: (id)      => API.get(`/players/${id}`),
+  create:  (data)    => API.post('/players', data),
+  update:  (id, data) => API.put(`/players/${id}`, data),
+  delete:  (id)      => API.delete(`/players/${id}`),
+};
+
+export const venuesAPI = {
+  getAll:  ()        => API.get('/venues'),
+  getById: (id)      => API.get(`/venues/${id}`),
+  create:  (data)    => API.post('/venues', data),
+  update:  (id, data) => API.put(`/venues/${id}`, data),
+};
+
+export const tweetsAPI = {
+  getAll: (filters) => API.get('/tweets', { params: filters }),
+  create: (data)    => API.post('/tweets', data),
+};
+
+export default API;

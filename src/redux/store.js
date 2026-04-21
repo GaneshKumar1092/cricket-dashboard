@@ -1,26 +1,19 @@
+// redux/store.js - Redux store combining all slices
 import { configureStore } from '@reduxjs/toolkit';
+import authReducer    from './slices/authSlice';
 import matchesReducer from './slices/matchesSlice';
-import tweetsReducer from './slices/tweetsSlice';
-import venuesReducer from './slices/venuesSlice';
-import authReducer from './slices/authSlice';
 import playersReducer from './slices/playersSlice';
-import uiReducer from './slices/uiSlice';
+import venuesReducer  from './slices/venuesSlice';
+import tweetsReducer  from './slices/tweetsSlice';
 
 const store = configureStore({
   reducer: {
+    auth:    authReducer,
     matches: matchesReducer,
-    tweets: tweetsReducer,
-    venues: venuesReducer,
-    auth: authReducer,
     players: playersReducer,
-    ui: uiReducer,
+    venues:  venuesReducer,
+    tweets:  tweetsReducer,
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['auth/setUser'],
-      },
-    }),
 });
 
 export default store;

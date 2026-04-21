@@ -1,51 +1,40 @@
-// test change   
-import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import Layout from './components/layout/Layout';
+// App.js - Main routing and layout
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Pages (we'll build these in future phases)
 import HomePage from './pages/HomePage';
-import MatchesPage from './pages/MatchesPage';
-import MatchDetailPage from './pages/MatchDetailPage';
-import TweetsPage from './pages/TweetsPage';
-import VenuesPage from './pages/VenuesPage';
-import VenueDetailPage from './pages/VenueDetailPage';
-import PlayersPage from './pages/PlayersPage';
-import PlayerDetailPage from './pages/PlayerDetailPage';
-import AdminPage from './pages/AdminPage';
-import LoginPage from './pages/LoginPage';
-import NotFoundPage from './pages/NotFoundPage';
+
+// Placeholder pages (to be built phase by phase)
+const LiveMatchPage = () => <div style={{padding:'2rem',color:'white'}}>Live Match Page - Coming in Phase 3</div>;
+const PlayerPage    = () => <div style={{padding:'2rem',color:'white'}}>Player Page - Coming in Phase 5</div>;
+const VenuePage     = () => <div style={{padding:'2rem',color:'white'}}>Venue Page - Coming in Phase 4</div>;
+const SearchPage    = () => <div style={{padding:'2rem',color:'white'}}>Smart Search - Coming in Phase 6</div>;
+const SocialPage    = () => <div style={{padding:'2rem',color:'white'}}>Social Pulse - Coming in Phase 8</div>;
+const PredictorPage = () => <div style={{padding:'2rem',color:'white'}}>Win Predictor - Coming in Phase 7</div>;
 
 function App() {
-  const { darkMode } = useSelector((state) => state.ui);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-dm transition-colors duration-300">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<HomePage />} />
-            <Route path="matches" element={<MatchesPage />} />
-            <Route path="matches/:id" element={<MatchDetailPage />} />
-            <Route path="tweets" element={<TweetsPage />} />
-            <Route path="venues" element={<VenuesPage />} />
-            <Route path="venues/:id" element={<VenueDetailPage />} />
-            <Route path="players" element={<PlayersPage />} />
-            <Route path="players/:id" element={<PlayerDetailPage />} />
-            <Route path="admin" element={<AdminPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </div>
-    </div>
+    <Router>
+      {/* Toast notifications - available globally */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        theme="dark"
+      />
+
+      <Routes>
+        <Route path="/"              element={<HomePage />} />
+        <Route path="/match/:id"     element={<LiveMatchPage />} />
+        <Route path="/player/:id"    element={<PlayerPage />} />
+        <Route path="/venue/:id"     element={<VenuePage />} />
+        <Route path="/search"        element={<SearchPage />} />
+        <Route path="/social"        element={<SocialPage />} />
+        <Route path="/predictor"     element={<PredictorPage />} />
+      </Routes>
+    </Router>
   );
 }
 

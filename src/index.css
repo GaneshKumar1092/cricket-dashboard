@@ -1,0 +1,40 @@
+/* index.css - Global base styles for CricDash */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0a0f1e;
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0f1e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00c896;
+  border-radius: 3px;
+}
+
+/* Global link reset */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Utility classes used across all phases */
+.text-green  { color: #00c896; }
+.text-red    { color: #ff4757; }
+.text-yellow { color: #ffa502; }
+.text-muted  { color: #8899aa; }
